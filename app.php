@@ -11,7 +11,7 @@ $conn = new mysqli('localhost','root','','Usermanual');
 $table = "Tests";
 
 //Set up connection details on mooneycalla.com
-//$conn = new mysqli('http://.mooneycallans.com','m558405_test','usermanual','localhost/m558405_usermanual');
+//$conn = new mysqli('http://mooneycallans.com','m558405_test','usermanual','m558405_usermanual');
 
 //Check connection 
 if ($conn -> connect_error){
