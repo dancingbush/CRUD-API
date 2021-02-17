@@ -42,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET'){
      * dept name or just retirn the entire table.
      * 'dept' is defied as a string representing the deprtment 
      * in the URL GET Call in the app
+     * POSTMAN http://localhost/crud_api/api/departments.php/departments/
      */
 
      if (isset($_GET['departmentName'])){
@@ -64,6 +65,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET'){
      exit(json_encode($data));
 
 }
+
+
+if ($_SERVER['REQUEST_METHOD'] ===  'POST'){
+    /**
+     * Add a new row, ID is autmatically assigned so
+     * does not need to be specifed when teh method is called
+     * 
+     * POSTMAN : POST http://localhost/crud_api/api/departments.php/departments
+     * ake sure you post an JSON obet iwth DB vales (see instructions)
+     */
+
+     $data = json_decode(file_get_contents("php://input"));//get data passed to function
+     $sql = $conn->query("INSERT INTO $table (departmentName, mainNumber,extension,email,newsAlerts,general,openingHours,oncall) VALUES ('".$data->departmentName."','".$data->mainNumber."','".$data->extension."','".$data->email."','".$data->newsAlerts."','".$data->general."','".$data->openingHours."','".$data->oncall."')");
+
+     if ($sql){
+         //if sql query valid insert id and return $sql object
+         $data->id = $conn->insert_id;
+         exit(json_encode($data));//return SQL insert as JSON to caller or test in POSTMAN
+     }else{
+         exit(json_encode(array('status' => 'error: ', 'SQL - ' => '$sql')));
+     }
+}
+
+if ($_SERVER['REQUEST_METHOD']==='PUT'){
+    /**
+     * Update a row according to ID
+     */
+    if (isset($_GET['id'])){
+    $id = $conn->real_escape_string($_GET['id']);
+        //id is apssed during te call to this function
+        $data = json_decode(file_get_contents("php://input"));
+        $sql = $conn -> query("UPDATE $table SET departmentName= '".$data->departmentName."', mainNumber = '".$data->mainNumber."',
+        extension = '".$data->extension."', email = '".$data->email."', newsAlerts = '".$data->newsAlerts."',
+        general = '".$data->general."', openingHours = '".$data->openingHours."', oncall = '".$data->oncall."' WHERE id = '$id'");
+
+
+        if ($sql){
+            exit(json_encode(array('status' => 'success')));
+        }else{
+            exit(json_encode(array('status' => 'error', 'SQL command-' => '$sql')));
+        }
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'DELETE'){
+    /**
+     * Delete accoring to the id of teh row
+     * passed form teh function call
+     * 
+     * POSTMAN test : http://localhost/crud_api/api/departments.php/departments/?id=1
+     * Where id is the row id to delete
+     */
+    if (isset($_GET['id'])){
+        $id = $conn -> real_escape_string($_GET['id']);
+        $sql = $conn->query("DELETE FROM $table WHERE departments.id = '$id'");
+
+        //If SQL commend succeds or fails retun message to caller
+        if ($sql){
+            exit(json_encode(array('status' => 'success')));
+        }else{
+            exit(json_encode(array('status'=>'error id not deleted')));
+        }
+    }
+}
+
+
 
 
 ?>
