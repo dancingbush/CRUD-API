@@ -27,7 +27,7 @@ require_once 'headers.php';
  * Test url in POST Man http://localhost/crud_api/api/departments.php/departments/ for getall
  * test url for just Haematology: http://localhost/crud_api/api/departments.php/departments/?departmentName=Haematology
  */
-$conn = new mysqli('localhost','root','','Usermanual');
+$conn = new mysqli('localhost','root','','usermanual2');
 $table = 'departments';
 
 
@@ -42,7 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET'){
      * dept name or just retirn the entire table.
      * 'dept' is defied as a string representing the deprtment 
      * in the URL GET Call in the app
-     * POSTMAN http://localhost/crud_api/api/departments.php/departments/
+     * POSTMAN http://localhost/crud_api/api/departments.php/departments/ will retrn allof them
+     * http://mooneycallans.com/crud_api/api/departments.php/departments/?departmentName=Haematology retrun haematology only
      */
 
      if (isset($_GET['departmentName'])){
@@ -51,9 +52,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET'){
          $sql = $conn->query("SELECT * FROM $table WHERE departmentName = '$department'");
          $data = $sql->fetch_assoc();//return row /s as an array
 
-     }else{
+     }else {
          //If deprtmentname not found retun all rows
-         $data = array();
+       $data = array();
          $sql = $conn->query("SELECT * FROM $table");
          while($d = $sql->fetch_assoc()){
              //add every row $d returned to teh data array
@@ -61,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET'){
          }
      }
 
-     //Reunr the JSON reprsenation of the data
+     //Reunr the JSON reprsenation of the data; if one row its an JSON object only
      exit(json_encode($data));
 
 }
@@ -91,6 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] ===  'POST'){
 if ($_SERVER['REQUEST_METHOD']==='PUT'){
     /**
      * Update a row according to ID
+     * POSTMAN PUT  http://localhost/crud_api/api/departments.php/departments/?id=6
      */
     if (isset($_GET['id'])){
     $id = $conn->real_escape_string($_GET['id']);
